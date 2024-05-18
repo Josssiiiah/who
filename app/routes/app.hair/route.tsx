@@ -153,7 +153,7 @@ import {
           />
         </div>
   
-        <div className="pt-24 w-full max-w-4xl px-4">
+        {/* <div className="pt-24 w-full max-w-4xl px-4">
           <h2 className="text-3xl pt-12 text-center font-semibold">Image Gallery</h2>
           <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {imageList.map((url, index) => (
@@ -190,7 +190,7 @@ import {
               <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">Add Resource</button>
             </div>
           </Form>
-        </div>
+        </div> */}
       </div>
     );
   }
