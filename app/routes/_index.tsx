@@ -1,5 +1,7 @@
 import { Link } from "@remix-run/react";
 import { Button } from "~/components/ui/button";
+import { useNavigate } from "@remix-run/react";
+
 import { FaRegFileAlt, FaFilePdf, FaPen, FaCut, FaBook, FaPaintBrush } from 'react-icons/fa';
 
 interface FeatureCardProps {
@@ -21,13 +23,20 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ icon, title, description }) =
 );
 
 export default function Index() {
+  const navigate = useNavigate();
+
+  const handleButtonClick = () => {
+    navigate("/app/grid");
+  };
+
+
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center text-gray-800">
       <div className="flex flex-col px-4 space-y-6 text-center pt-48 md:pt-64">
         <h1 className="text-3xl font-bold"> Connecting the <br />Stanford gig economy </h1>
         <p>From haircuts to homework help, graphic design to guitar lessons, 
         find or post opportunities tailored to your needs. </p>
-        <Button>
+        <Button onClick={handleButtonClick}>
           <Link
             to="/app/grid"
             className="px-4 py-2 rounded"
