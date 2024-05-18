@@ -3,20 +3,33 @@ import { FaCut, FaBook, FaPaintBrush, FaGuitar, FaLaptopCode, FaShoppingBag, FaB
 import { Link } from "@remix-run/react";
 import { Button } from '~/components/ui/button';
 
+import { useNavigate } from "@remix-run/react";
+
 interface CategoryCardProps {
   icon: React.ReactNode;
   title: string;
   link: string;
 }
 
-const CategoryCard: React.FC<CategoryCardProps> = ({ icon, title, link }) => (
-  <Link to={link} className="flex flex-col items-center bg-white rounded-lg p-6 shadow-sm text-center hover:shadow-md transition-shadow">
-    <div className="text-4xl text-gray-600 mb-4">
-      {icon}
+const CategoryCard: React.FC<CategoryCardProps> = ({ icon, title, link }) => {
+  const navigate = useNavigate();
+
+  const handleCardClick = () => {
+    navigate(link);
+  };
+
+  return (
+    <div
+      onClick={handleCardClick}
+      className="flex flex-col items-center bg-white rounded-lg p-6 shadow-sm text-center hover:shadow-md transition-shadow cursor-pointer"
+    >
+      <div className="text-4xl text-gray-600 mb-4">
+        {icon}
+      </div>
+      <h3 className="text-xl font-semibold">{title}</h3>
     </div>
-    <h3 className="text-xl font-semibold">{title}</h3>
-  </Link>
-);
+  );
+};
 
 export default function Grid() {
   return (
