@@ -14,12 +14,13 @@
     "drizzle:update": "drizzle-kit generate:sqlite --out ./app/drizzle/migrations --schema ./app/drizzle/schema.server.ts",
     "typegen": "wrangler types",
     "db:sql": "drizzle-kit generate:sqlite --out ./app/drizzle/sql --schema ./app/drizzle/schema.server.ts",
-    "db:migrate:local": "pnpm run drizzle:update && npx wrangler d1 migrations apply db --local",
-    "db:migrate": "pnpm run drizzle:update && npx wrangler d1 migrations apply db --remote",
+    "db:migrate:local": "pnpm run drizzle:update && npx wrangler d1 migrations apply who_db --local",
+    "db:migrate": "pnpm run drizzle:update && npx wrangler d1 migrations apply who_db --remote",
     "fmt": "prettier --write \"app/**/*.{tsx,ts,css}\" \"drizzle/**/*.ts\""
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.556.0",
+    "@aws-sdk/lib-storage": "^3.578.0",
     "@aws-sdk/s3-request-presigner": "^3.556.0",
     "@lucia-auth/adapter-sqlite": "^3.0.1",
     "@remix-run/cloudflare": "^2.8.1",

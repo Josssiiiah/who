@@ -5,7 +5,7 @@ import {
 } from "@remix-run/cloudflare";
 import { Form, useLoaderData } from "@remix-run/react";
 import { drizzle } from "drizzle-orm/d1";
-import { resources } from "app/drizzle/schema.server";
+import { test_table } from "app/drizzle/schema.server";
 
 import {
   S3Client,
@@ -13,8 +13,9 @@ import {
   GetObjectCommand,
   PutObjectCommand,
 } from "@aws-sdk/client-s3";
+
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { doTheAuthThing } from "lib/authThing";
+import { doTheDbThing } from "lib/dbThing";
 
 const S3 = new S3Client({
   region: "auto",
@@ -26,29 +27,22 @@ const S3 = new S3Client({
   },
 });
 
-// This function fetches resources from D1 and images from R2
+// This function fetches test_table from D1 and images from R2
 export async function loader({ request, context }: LoaderFunctionArgs) {
   // call this at the top of all your loaders that need auth and db
-  const { user, session, db } = await doTheAuthThing({ request, context });
-  // now you just have to condition all these queires on the user id
-  if (user) {
-    const userId = user.id;
-    console.log("LOGGED IN!!");
-    //      ^ type: string
-  } else {
-    console.log("NOT LOGGED IN!!");
-  }
+  const { db } = await doTheDbThing({ context });
+
   const resourceList = await db
     .select({
-      id: resources.id,
-      title: resources.title,
-      href: resources.href,
+      id: test_table.id,
+      title: test_table.title
+   
     })
-    .from(resources)
-    .orderBy(resources.id);
+    .from(test_table)
+    .orderBy(test_table.id);
 
   const { Contents } = await S3.send(
-    new ListObjectsV2Command({ Bucket: "artworks" })
+    new ListObjectsV2Command({ Bucket: "who-profile-pictures" })
   );
 
   const imageList = await Promise.all(
@@ -57,7 +51,7 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
         return getSignedUrl(
           S3,
           new GetObjectCommand({
-            Bucket: "artworks",
+            Bucket: "who-profile-pictures",
             Key: file.Key,
           }),
           { expiresIn: 3600 }
@@ -67,7 +61,7 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
     }) || []
   );
 
-  console.log(await S3.send(new ListObjectsV2Command({ Bucket: "artworks" })));
+  console.log(await S3.send(new ListObjectsV2Command({ Bucket: "who-profile-pictures" })));
   return json({
     resourceList,
     imageList: imageList.filter((url) => url !== null), // Pass the list of signed image URLs to the frontend
@@ -103,9 +97,7 @@ export default function Index() {
       <ul>
         {resourceList.map((resource) => (
           <li key={resource.id}>
-            <a target="_blank" href={resource.href} rel="noreferrer">
               {resource.title}
-            </a>
           </li>
         ))}
       </ul>
@@ -115,11 +107,7 @@ export default function Index() {
             Title: <input type="text" name="title" required />
           </label>
         </div>
-        <div>
-          <label>
-            URL: <input type="url" name="href" required />
-          </label>
-        </div>
+     
         <button type="submit">Add Resource</button>
       </Form>
     </div>
@@ -132,11 +120,10 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
   // Handle resource addition
   const title = formData.get("title");
-  const href = formData.get("href");
-  if (title && href) {
+  if (title) {
     await db
-      .insert(resources)
-      .values({ title: title as string, href: href as string })
+      .insert(test_table)
+      .values({ title: title as string})
       .execute();
     return json({ message: "Resource added" }, { status: 201 });
   }
@@ -145,14 +132,14 @@ export async function action({ request, context }: ActionFunctionArgs) {
   const file = formData.get("image");
   if (file instanceof File) {
     // Prepare the payload for the S3 upload
-    const fileStream = file.stream();
     const fileName = file.name;
+    const fileStream = file.stream();
     const fileType = file.type;
 
     try {
       await S3.send(
         new PutObjectCommand({
-          Bucket: "artworks", // Specify your S3 bucket name
+          Bucket: "who-profile-pictures", // Specify your S3 bucket name
           Key: fileName,
           Body: fileStream,
           ContentType: fileType,
