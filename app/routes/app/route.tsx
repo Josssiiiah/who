@@ -13,6 +13,8 @@ import {
   GetObjectCommand,
   PutObjectCommand,
 } from "@aws-sdk/client-s3";
+import { Upload } from "@aws-sdk/lib-storage";
+
 
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { doTheDbThing } from "lib/dbThing";
@@ -136,15 +138,39 @@ export async function action({ request, context }: ActionFunctionArgs) {
     const fileStream = file.stream();
     const fileType = file.type;
 
+    // try {
+    //   await S3.send(
+    //     new PutObjectCommand({
+    //       Bucket: "who-profile-pictures", // Specify your S3 bucket name
+    //       Key: fileName,
+    //       Body: fileStream,
+    //       ContentType: fileType,
+    //     })
+    //   );
+    //   return json(
+    //     { message: "Image uploaded to S3 successfully" },
+    //     { status: 201 }
+    //   );
+    // } catch (error) {
+    //   console.error("Failed to upload to S3", error);
+    //   return json({ message: "Failed to upload image" }, { status: 500 });
+    // }
     try {
-      await S3.send(
-        new PutObjectCommand({
-          Bucket: "who-profile-pictures", // Specify your S3 bucket name
+      const upload = new Upload({
+        client: S3,
+        params: {
+          Bucket: "who-profile-pictures",
           Key: fileName,
           Body: fileStream,
           ContentType: fileType,
-        })
-      );
+        },
+      });
+
+      upload.on("httpUploadProgress", (progress) => {
+        console.log(`Uploaded ${progress.loaded} of ${progress.total} bytes`);
+      });
+
+      await upload.done();
       return json(
         { message: "Image uploaded to S3 successfully" },
         { status: 201 }
