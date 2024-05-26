@@ -29,7 +29,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ icon, title, link }) => {
   return (
     <div
       onClick={handleCardClick}
-      className="flex flex-col items-center bg-white rounded-lg p-6 shadow-sm text-center hover:shadow-md transition-shadow cursor-pointer"
+      className="flex flex-col items-center border border-black bg-white rounded-lg p-6 sm:px-4 sm:py-36 shadow-sm text-center hover:shadow-2xl transition-shadow cursor-pointer"
     >
       <div className="text-4xl text-gray-600 mb-4">{icon}</div>
       <h3 className="text-xl font-semibold">{title}</h3>
@@ -39,8 +39,8 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ icon, title, link }) => {
 
 export default function Grid() {
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center text-gray-800">
-      <div className="pt-24 grid grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-4xl px-4">
+    <div className="min-h-screen flex flex-col items-center text-gray-800">
+      <div className="pt-24 grid grid-cols-2 lg:grid-cols-3 gap-6 w-full px-4">
         <CategoryCard
           icon={<FaCut />}
           title="Haircuts & Beauty Services"

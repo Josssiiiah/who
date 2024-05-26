@@ -128,7 +128,7 @@ export default function HaircutsBeautyServices() {
         <StylistCard
           name="Alex Johnson"
           description="Experienced in modern haircuts and styling. Specializes in men's and women's cuts."
-          link="/stylists/alex-johnson"
+          link="/app/stylists/alex-johnson"
           image="/student.webp" // replace with the actual path to the generated images
         />
         <StylistCard

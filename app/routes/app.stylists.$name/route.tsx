@@ -3,7 +3,7 @@ import {
   json,
   LoaderFunctionArgs,
 } from "@remix-run/cloudflare";
-import { Form, useFetcher, useLoaderData } from "@remix-run/react";
+import { Form, useLoaderData } from "@remix-run/react";
 import { drizzle } from "drizzle-orm/d1";
 import { students } from "app/drizzle/schema.server";
 
@@ -18,6 +18,7 @@ import { Upload } from "@aws-sdk/lib-storage";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { doTheDbThing } from "lib/dbThing";
 import React, { useState } from "react";
+import { toast } from "~/components/ui/use-toast";
 
 const S3 = new S3Client({
   region: "auto",
@@ -112,14 +113,12 @@ const predefinedStudents = [
     name: "morgan-taylor",
     category: "Hairdresser",
     description: "Hi, I'm Morgan! I focus on hair coloring and treatments, and I love working with clients to find the perfect look. Whether you're looking for a bold new color or need some expert care for your hair, I'm here to help. Let's work together to keep your hair looking fabulous and healthy!",
-    image: "/student5.webp",
+    image: "/student6.webp",
   },
 ];
 
 export default function Add() {
   const { resourceList, imageList } = useLoaderData<typeof loader>();
-  const fetcher = useFetcher();  // Using useFetcher hook
-
   const [fileName, setFileName] = useState<string>("");
   const [formData, setFormData] = useState({
     name: "",
@@ -147,10 +146,27 @@ export default function Add() {
       formData.append("name", student.name);
       formData.append("category", student.category);
       formData.append("description", student.description);
-      formData.append("fileName", generateUniqueFileName(student.image));
 
-      fetcher.submit(formData, { method: "post"});
+      // Fetch the image file from the public folder
+      const response = await fetch(student.image);
+      const blob = await response.blob();
+      const file = new File([blob], generateUniqueFileName(student.image), { type: blob.type });
+      formData.append("image", file);
+      formData.append("fileName", file.name);
 
+      const result = await fetch(window.location.pathname, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!result.ok) {
+        console.error("Failed to add student:", student.name);
+      } else {
+        toast({
+          title: "Success",
+          description: `Student ${student.name.replace(/-/g, ' ')} added successfully.`,
+        });
+      }
     }
   };
 
@@ -259,8 +275,6 @@ export default function Add() {
 export async function action({ request, context }: ActionFunctionArgs) {
   const db = drizzle(context.cloudflare.env.DB);
   const formData = await request.formData();
-
-  console.log("Heloo")
 
   // Handle resource addition
   const name = formData.get("name");
