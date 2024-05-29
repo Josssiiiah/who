@@ -7,7 +7,6 @@ import { Form, useFetcher, useLoaderData } from "@remix-run/react";
 import { drizzle } from "drizzle-orm/d1";
 import { students } from "app/drizzle/schema.server";
 import { SeedAll } from "./seed";
-import { ClearBoth } from "./clear";
 
 import {
   S3Client,
@@ -167,7 +166,6 @@ export default function Add() {
           </button>
         </Form>
         <SeedAll />
-        <ClearBoth />
       </div>
       <div className="pt-24 w-full max-w-4xl px-4">
         <h2 className="text-3xl pt-12 text-center font-semibold">
