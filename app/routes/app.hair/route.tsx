@@ -5,16 +5,12 @@ import {
 } from "@remix-run/cloudflare";
 import { Form, useLoaderData } from "@remix-run/react";
 import { drizzle } from "drizzle-orm/d1";
-import { test_table } from "app/drizzle/schema.server";
-
+import { students } from "app/drizzle/schema.server";
 import {
   S3Client,
   ListObjectsV2Command,
   GetObjectCommand,
-  PutObjectCommand,
 } from "@aws-sdk/client-s3";
-import { Upload } from "@aws-sdk/lib-storage";
-
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { doTheDbThing } from "lib/dbThing";
 
@@ -28,60 +24,62 @@ const S3 = new S3Client({
   },
 });
 
-// This function fetches test_table from D1 and images from R2
 export async function loader({ request, context }: LoaderFunctionArgs) {
-  // call this at the top of all your loaders that need auth and db
   const { db } = await doTheDbThing({ context });
 
-  const resourceList = await db
+  const studentList = await db
     .select({
-      id: test_table.id,
-      title: test_table.title,
+      id: students.id,
+      name: students.name,
+      category: students.category,
+      description: students.description,
+      image_url: students.image_url,
     })
-    .from(test_table)
-    .orderBy(test_table.id);
+    .from(students)
+    .orderBy(students.id);
 
-  const { Contents } = await S3.send(
-    new ListObjectsV2Command({ Bucket: "who-profile-pictures" })
+  const filteredStudentList = studentList.filter(student => 
+    student.category === 'Stylist' || 
+    student.category === 'Barber' || 
+    student.category === 'Hairdresser'
   );
 
-  const imageList = await Promise.all(
-    Contents?.map(async (file) => {
-      if (file.Key) {
-        return getSignedUrl(
+  const signedStudentList = await Promise.all(
+    filteredStudentList.map(async (student) => {
+      if (student.image_url) {
+        const signedUrl = await getSignedUrl(
           S3,
           new GetObjectCommand({
             Bucket: "who-profile-pictures",
-            Key: file.Key,
+            Key: student.image_url,
           }),
           { expiresIn: 3600 }
-        ); // Expires in 1 hour
+        );
+        return { ...student, image_url: signedUrl };
       }
-      return null;
-    }) || []
+      return student;
+    })
   );
 
-  console.log(
-    await S3.send(new ListObjectsV2Command({ Bucket: "who-profile-pictures" }))
-  );
   return json({
-    resourceList,
-    imageList: imageList.filter((url) => url !== null), // Pass the list of signed image URLs to the frontend
+    studentList: signedStudentList,
   });
 }
 
 interface StylistCardProps {
   name: string;
+  category: string;
   description: string;
-  link: string;
   image: string;
+  link: string;
 }
 
 const StylistCard: React.FC<StylistCardProps> = ({
   name,
+  category,
   description,
-  link,
   image,
+  link,
 }) => (
   <div className="flex flex-col items-center bg-white rounded-lg p-6 shadow-sm text-center hover:shadow-md transition-shadow">
     <img
@@ -90,6 +88,7 @@ const StylistCard: React.FC<StylistCardProps> = ({
       className="w-full h-48 object-cover rounded-md mb-4"
     />
     <h3 className="text-xl font-semibold mb-2">{name}</h3>
+    <p className="text-gray-600 mb-2">{category}</p>
     <p className="text-gray-600 mb-4">{description}</p>
     <a href={link} className="text-blue-500 hover:underline">
       View Profile
@@ -98,6 +97,8 @@ const StylistCard: React.FC<StylistCardProps> = ({
 );
 
 export default function HaircutsBeautyServices() {
+  const { studentList } = useLoaderData<typeof loader>();
+
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center text-gray-800">
       <div className="flex flex-col px-6 space-y-6 text-center pt-24 md:pt-32">
@@ -111,42 +112,16 @@ export default function HaircutsBeautyServices() {
       </div>
 
       <div className="pt-24 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-4xl px-4">
-        <StylistCard
-          name="Alex Johnson"
-          description="Experienced in modern haircuts and styling. Specializes in men's and women's cuts."
-          link="/app/stylists/alex-johnson"
-          image="/student.webp" // replace with the actual path to the generated images
-        />
-        <StylistCard
-          name="Jamie Lee"
-          description="Professional makeup artist and hairstylist. Perfect for events and everyday looks."
-          link="/app/stylists/jamie-lee"
-          image="/student2.webp" // replace with the actual path to the generated images
-        />
-        <StylistCard
-          name="Taylor Smith"
-          description="Expert in braiding, extensions, and natural hair care. Book your appointment today."
-          link="/app/stylists/taylor-smith"
-          image="/path/to/your/image3.jpg" // replace with the actual path to the generated images
-        />
-        <StylistCard
-          name="Jordan Brown"
-          description="Specializes in color treatments and creative hair designs. Transform your style with Jordan."
-          link="/app/stylists/jordan-brown"
-          image="/path/to/your/image4.jpg" // replace with the actual path to the generated images
-        />
-        <StylistCard
-          name="Casey White"
-          description="Offers a range of beauty services including facials and waxing. Pamper yourself with Casey."
-          link="/app/stylists/casey-white"
-          image="/path/to/your/image5.jpg" // replace with the actual path to the generated images
-        />
-        <StylistCard
-          name="Morgan Taylor"
-          description="Skilled in updos and formal event hairstyles. Look your best for any occasion."
-          link="/app/stylists/morgan-taylor"
-          image="/path/to/your/image6.jpg" // replace with the actual path to the generated images
-        />
+        {studentList.map((student) => (
+          <StylistCard
+            key={student.id}
+            name={student.name!.replace(/-/g, " ")}
+            category={student.category!}
+            description={student.description!}
+            image={student.image_url!}
+            link={`/app/stylists/${student.name}`}
+          />
+        ))}
       </div>
     </div>
   );

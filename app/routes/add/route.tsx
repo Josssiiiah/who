@@ -80,6 +80,7 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 
 export default function Add() {
   const { resourceList, imageList } = useLoaderData<typeof loader>();
+  console.log("ImageList: ", imageList)
   const fetcher = useFetcher();
 
   const [fileName, setFileName] = useState<string>("");
