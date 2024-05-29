@@ -19,3 +19,8 @@ export const students = sqliteTable("students", {
   insta: text("insta"),
   // need to add optional field for instagram tag
 });
+
+export const signups = sqliteTable("signups", {
+  id: integer("id").primaryKey(),
+  email: text("email").notNull(),
+});

@@ -55,11 +55,13 @@ export async function loader({ params, context }: LoaderFunctionArgs) {
 }
 
 const clientPhotos = [
-  "/image1.png",
-  "/image2.png",
-  "/image3.png",
-  "/student.webp",
-  "/student2.webp",
+
+  "/barber1.png",
+  "/barber2.png",
+  "/barber3.png",
+  "/barber4.png",
+  "/barber5.png"
+
 ];
 
 const capitalizeName = (name: string) => {
@@ -69,7 +71,6 @@ const capitalizeName = (name: string) => {
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 };
-
 
 export default function Name() {
   const { studentInfo } = useLoaderData<typeof loader>();
@@ -82,10 +83,9 @@ export default function Name() {
 
   const formattedName = capitalizeName(studentInfo.name!.replace(/-/g, " "));
 
-
   return (
     <div className="bg-gray-100 w-full min-h-full flex flex-col items-center ">
-      <div className="w-full bg-white shadow-lg rounded-lg">
+      <div className="w-full bg-white rounded-lg">
         <div className="bg-gradient-to-r from-purple-500 to-indigo-600 h-48 flex justify-center relative">
           <div className="absolute top-16 bg-gradient-to-r from-purple-500 to-indigo-600 p-1 rounded-full">
             <img
@@ -108,25 +108,28 @@ export default function Name() {
               {formattedName}
             </h1>
 
-              <p className="pt-4 text-center sm:text-left text-gray-600">{studentInfo.description}</p>
-
+            <p className="pt-4 text-center sm:text-left text-gray-600">
+              {studentInfo.description}
+            </p>
           </div>
         </div>
         <div className="pt-8 pb-8 px-8">
-  <h2 className="text-xl font-semibold text-gray-800">Gallery</h2>
-  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-    {clientPhotos.map((photo, index) => (
-      <div key={index} className="relative w-full pb-[75%] overflow-hidden">
-        <img
-          src={photo}
-          alt={`Client ${index + 1}`}
-          className="absolute top-0 left-0 w-full h-full object-cover"
-        />
-      </div>
-    ))}
-  </div>
-</div>
-
+          <h2 className="text-xl font-semibold text-gray-800">Gallery</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+            {clientPhotos.map((photo, index) => (
+              <div
+                key={index}
+                className="relative w-full pb-[75%] overflow-hidden"
+              >
+                <img
+                  src={photo}
+                  alt={`Client ${index + 1}`}
+                  className="absolute top-0 left-0 w-full h-full object-cover"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
