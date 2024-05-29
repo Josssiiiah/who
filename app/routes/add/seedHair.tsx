@@ -13,35 +13,35 @@ const predefinedStudents = [
     category: "Stylist",
     description:
       "Hi, I'm Jamie! With five years of styling experience, I can help you find the perfect look for any occasion. From casual styles to special events, I'm here to make sure you feel confident and fabulous. Let's work together to bring out your best look. Book an appointment and let's get started!",
-    image: "/image10.jpeg",
+    image: "/jamie.jpeg",
   },
   {
     name: "taylor-smith",
     category: "Hairdresser",
     description:
       "Hey! I'm Taylor, and I specialize in hair coloring and treatments. If you're thinking about changing up your hair color or need some TLC for your locks, I'm your person. I love experimenting with new colors and techniques to give you a unique and vibrant look. Let's make your hair goals a reality!",
-    image: "/image10.jpeg",
+    image: "/student2.webp",
   },
   {
     name: "jordan-brown",
     category: "Hairdresser",
     description:
       "What's up? I'm Jordan, and I'm passionate about hair coloring and treatments. From bold colors to subtle highlights, I love helping people find their perfect shade. I also offer a range of treatments to keep your hair healthy and shiny. Come see me, and let's transform your hair together!",
-    image: "/image10.jpeg",
+    image: "/student4.webp",
   },
   {
     name: "casey-white",
     category: "Hairdresser",
     description:
       "Hey there! I'm Casey, your friendly hairdresser specializing in color and treatments. Whether you're going for a dramatic change or just a little touch-up, I'm here to help. I believe in making hair care fun and accessible for everyone. Let's get together and create a look you'll love!",
-    image: "/image10.jpeg",
+    image: "/student5.webp",
   },
   {
     name: "morgan-taylor",
     category: "Hairdresser",
     description:
       "Hi, I'm Morgan! I focus on hair coloring and treatments, and I love working with clients to find the perfect look. Whether you're looking for a bold new color or need some expert care for your hair, I'm here to help. Let's work together to keep your hair looking fabulous and healthy!",
-    image: "/image10.jpeg",
+    image: "/student7.webp",
   },
 ];
 

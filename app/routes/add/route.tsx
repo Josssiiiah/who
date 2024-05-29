@@ -12,9 +12,9 @@ import {
   ListObjectsV2Command,
   GetObjectCommand,
   DeleteObjectsCommand,
+  PutObjectCommand
 } from "@aws-sdk/client-s3";
-import { Upload } from "@aws-sdk/lib-storage";
-import { SeedAll } from "./seed";
+import { SeedAll } from "./seedHair";
 
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { doTheDbThing } from "lib/dbThing";
@@ -258,24 +258,18 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
   if (file instanceof File) {
     try {
-      const fileStream = file.stream();
+      const fileBuffer = await file.arrayBuffer();
       const fileType = file.type;
 
-      const upload = new Upload({
-        client: S3,
-        params: {
+      await S3.send(
+        new PutObjectCommand({
           Bucket: "who-profile-pictures",
           Key: fileName as string,
-          Body: fileStream,
+          Body: Buffer.from(fileBuffer),
           ContentType: fileType,
-        },
-        queueSize: 4,
-        partSize: 1024 * 1024 * 5,
-
-
-      });
- 
-      await upload.done();
+        })
+      );
+   
    
       const imageUrl = fileName;
 
