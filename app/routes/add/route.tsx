@@ -6,15 +6,15 @@ import {
 import { Form, useFetcher, useLoaderData } from "@remix-run/react";
 import { drizzle } from "drizzle-orm/d1";
 import { students } from "app/drizzle/schema.server";
-import { SeedAll } from "./seed";
 
 import {
   S3Client,
   ListObjectsV2Command,
   GetObjectCommand,
-  PutObjectCommand,
+  DeleteObjectsCommand,
 } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
+import { SeedAll } from "./seed";
 
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { doTheDbThing } from "lib/dbThing";
@@ -80,6 +80,8 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 
 export default function Add() {
   const { resourceList, imageList } = useLoaderData<typeof loader>();
+  const fetcher = useFetcher();
+
   const [fileName, setFileName] = useState<string>("");
   const [formData, setFormData] = useState({
     name: "",
@@ -165,7 +167,18 @@ export default function Add() {
             Add
           </button>
         </Form>
-        <SeedAll />
+      </div>
+      <SeedAll />
+      <div className="flex justify-center mt-4">
+        <fetcher.Form method="post">
+          <input type="hidden" name="actionType" value="clear" />
+          <button
+            type="submit"
+            className="bg-red-500 text-white px-4 py-2 rounded"
+          >
+            Clear
+          </button>
+        </fetcher.Form>
       </div>
       <div className="pt-24 w-full max-w-4xl px-4">
         <h2 className="text-3xl pt-12 text-center font-semibold">
@@ -199,8 +212,41 @@ export default function Add() {
 
 export async function action({ request, context }: ActionFunctionArgs) {
   const db = drizzle(context.cloudflare.env.DB);
-
   const formData = await request.formData();
+
+  // Check the action type
+  const actionType = formData.get("actionType");
+
+  if (actionType === "clear") {
+    try {
+      // Clear the database
+      await db.delete(students).execute();
+
+      // Clear the S3 bucket
+      const listObjects = await S3.send(
+        new ListObjectsV2Command({ Bucket: "who-profile-pictures" })
+      );
+
+      if (listObjects.Contents && listObjects.Contents.length > 0) {
+        const objectsToDelete = listObjects.Contents.map((item) => ({
+          Key: item.Key,
+        }));
+
+        await S3.send(
+          new DeleteObjectsCommand({
+            Bucket: "who-profile-pictures",
+            Delete: { Objects: objectsToDelete },
+          })
+        );
+      }
+
+      console.log("Database and S3 bucket cleared successfully")
+      return json({ message: "Database and S3 bucket cleared successfully" }, { status: 200 });
+    } catch (error) {
+      console.error("Failed to clear database and S3 bucket", error);
+      return json({ message: "Failed to clear database and S3 bucket" }, { status: 500 });
+    }
+  }
 
   // Handle resource addition
   const name = formData.get("name");
@@ -223,11 +269,9 @@ export async function action({ request, context }: ActionFunctionArgs) {
           ContentType: fileType,
         },
       });
-      console.log("HEYYY");
-
+ 
       await upload.done();
-      console.log("Uploaded");
-
+   
       const imageUrl = fileName;
 
       await db
@@ -240,6 +284,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
         })
         .execute();
 
+      console.log("Uploaded")
       return json(
         { message: "Image uploaded to S3 successfully" },
         { status: 201 }

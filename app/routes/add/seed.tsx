@@ -53,14 +53,10 @@ const generateUniqueFileName = (originalName: string) => {
 };
 
 export function SeedAll() {
-  const fetcher = useFetcher(); // Using useFetcher hook
+  const fetcher = useFetcher(); 
 
   const addAll = async () => {
     for (const student of predefinedStudents) {
-      if (!student.image) {
-        console.error(`Image path is undefined for student: ${student.name}`);
-        continue;
-      }
       const formData = new FormData();
       formData.append("name", student.name);
       formData.append("category", student.category);
@@ -69,22 +65,19 @@ export function SeedAll() {
 
       // Fetch the image from the public folder and convert it to a blob
       const response = await fetch(student.image);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch image: ${student.image}`);
-      }
       const blob = await response.blob();
       const file = new File([blob], student!.image.split("/").pop()!, {
         type: blob.type,
       });
 
       formData.append("image", file);
-
       fetcher.submit(formData, {
         method: "post",
         encType: "multipart/form-data",
       });
-      console.log("submitted");
+      
     }
+    console.log("Database Seeded");
   };
 
   return (
@@ -95,7 +88,7 @@ export function SeedAll() {
           onClick={addAll}
           className="bg-green-500 text-white px-4 py-2 rounded"
         >
-          Add All
+          Seed
         </button>
       </Form>
     </div>
