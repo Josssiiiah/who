@@ -6,6 +6,8 @@ import {
 import { Form, useFetcher, useLoaderData } from "@remix-run/react";
 import { drizzle } from "drizzle-orm/d1";
 import { students } from "app/drizzle/schema.server";
+import { SeedAll } from "./seed";
+import { ClearBoth } from "./clear";
 
 import {
   S3Client,
@@ -77,49 +79,8 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
   });
 }
 
-const predefinedStudents = [
-  {
-    name: "alex-johnson",
-    category: "Barber",
-    description: "Hey there! I'm Alex, your go-to barber for the freshest cuts and styles. Whether you're looking for a classic fade or something trendy and new, I've got you covered. I've been cutting hair since high school and love helping people look their best. Hit me up for a cut, and let's make you look sharp!",
-    image: "/image1.png",
-  },
-  {
-    name: "jamie-lee",
-    category: "Stylist",
-    description: "Hi, I'm Jamie! With five years of styling experience, I can help you find the perfect look for any occasion. From casual styles to special events, I'm here to make sure you feel confident and fabulous. Let's work together to bring out your best look. Book an appointment and let's get started!",
-    image: "/image2.png",
-  },
-  {
-    name: "taylor-smith",
-    category: "Hairdresser",
-    description: "Hey! I'm Taylor, and I specialize in hair coloring and treatments. If you're thinking about changing up your hair color or need some TLC for your locks, I'm your person. I love experimenting with new colors and techniques to give you a unique and vibrant look. Let's make your hair goals a reality!",
-    image: "/image1.png",
-  },
-  {
-    name: "jordan-brown",
-    category: "Hairdresser",
-    description: "What's up? I'm Jordan, and I'm passionate about hair coloring and treatments. From bold colors to subtle highlights, I love helping people find their perfect shade. I also offer a range of treatments to keep your hair healthy and shiny. Come see me, and let's transform your hair together!",
-    image: "/image1.png",
-  },
-  {
-    name: "casey-white",
-    category: "Hairdresser",
-    description: "Hey there! I'm Casey, your friendly hairdresser specializing in color and treatments. Whether you're going for a dramatic change or just a little touch-up, I'm here to help. I believe in making hair care fun and accessible for everyone. Let's get together and create a look you'll love!",
-    image: "/image1.png",
-  },
-  {
-    name: "morgan-taylor",
-    category: "Hairdresser",
-    description: "Hi, I'm Morgan! I focus on hair coloring and treatments, and I love working with clients to find the perfect look. Whether you're looking for a bold new color or need some expert care for your hair, I'm here to help. Let's work together to keep your hair looking fabulous and healthy!",
-    image: "/image1.png",
-  },
-];
-
 export default function Add() {
   const { resourceList, imageList } = useLoaderData<typeof loader>();
-  const fetcher = useFetcher(); // Using useFetcher hook
-
   const [fileName, setFileName] = useState<string>("");
   const [formData, setFormData] = useState({
     name: "",
@@ -139,24 +100,6 @@ export default function Add() {
   ) => {
     const { name, value } = event.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const addAll = async () => {
-    for (const student of predefinedStudents) {
-      const formData = new FormData();
-      formData.append("name", student.name);
-      formData.append("category", student.category);
-      formData.append("description", student.description);
-      formData.append("fileName", generateUniqueFileName(student.image));
-
-      // Fetch the image from the public folder and convert it to a blob
-      const response = await fetch(student.image);
-      const blob = await response.blob();
-
-      formData.append("image", blob, student.image);
-
-      fetcher.submit(formData, { method: "post" });
-    }
   };
 
   return (
@@ -222,14 +165,9 @@ export default function Add() {
           >
             Add
           </button>
-          <button
-            type="button"
-            onClick={addAll}
-            className="bg-green-500 text-white px-4 py-2 rounded"
-          >
-            Add All
-          </button>
         </Form>
+        <SeedAll />
+        <ClearBoth />
       </div>
       <div className="pt-24 w-full max-w-4xl px-4">
         <h2 className="text-3xl pt-12 text-center font-semibold">
@@ -251,7 +189,7 @@ export default function Add() {
         <ul className="list-disc list-inside mt-4">
           {resourceList.map((resource) => (
             <li key={resource.id}>
-              {resource.name}
+              {resource.name} <br />
               {resource.image_url}
             </li>
           ))}
@@ -263,6 +201,7 @@ export default function Add() {
 
 export async function action({ request, context }: ActionFunctionArgs) {
   const db = drizzle(context.cloudflare.env.DB);
+
   const formData = await request.formData();
 
   // Handle resource addition
@@ -286,8 +225,10 @@ export async function action({ request, context }: ActionFunctionArgs) {
           ContentType: fileType,
         },
       });
+      console.log("HEYYY");
 
       await upload.done();
+      console.log("Uploaded");
 
       const imageUrl = fileName;
 

@@ -94,7 +94,6 @@ export default function Name() {
             Back
           </button>
           <div className="text-center pt-10">
-            
             <h1 className="text-3xl font-bold text-gray-900">
               {formattedName}
             </h1>

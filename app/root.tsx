@@ -5,7 +5,7 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
-import { Toaster } from "~/components/ui/toaster"
+import { Toaster } from "~/components/ui/toaster";
 
 import type { LinksFunction } from "@remix-run/cloudflare";
 import stylesheet from "~/tailwind.css?url";
