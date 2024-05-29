@@ -269,6 +269,10 @@ export async function action({ request, context }: ActionFunctionArgs) {
           Body: fileStream,
           ContentType: fileType,
         },
+        queueSize: 4,
+        partSize: 1024 * 1024 * 5,
+
+
       });
  
       await upload.done();

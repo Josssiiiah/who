@@ -6,7 +6,7 @@ const predefinedStudents = [
     category: "Barber",
     description:
       "Hey there! I'm Alex, your go-to barber for the freshest cuts and styles. Whether you're looking for a classic fade or something trendy and new, I've got you covered. I've been cutting hair since high school and love helping people look their best. Hit me up for a cut, and let's make you look sharp!",
-    image: "/image10.jpeg",
+    image: "/student.webp",
   },
   {
     name: "jamie-lee",
