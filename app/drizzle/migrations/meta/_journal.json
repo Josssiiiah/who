@@ -120,6 +120,153 @@
       "when": 1714090185153,
       "tag": "0016_natural_human_fly",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "5",
+      "when": 1715986202834,
+      "tag": "0017_crazy_leper_queen",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "5",
+      "when": 1715986365896,
+      "tag": "0018_regular_silver_surfer",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "5",
+      "when": 1715986406070,
+      "tag": "0019_lame_krista_starr",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "5",
+      "when": 1715986482963,
+      "tag": "0020_clear_arachne",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "5",
+      "when": 1715986538893,
+      "tag": "0021_wild_albert_cleary",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "5",
+      "when": 1715986678988,
+      "tag": "0022_flawless_stone_men",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "5",
+      "when": 1716070747810,
+      "tag": "0023_shallow_triathlon",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "5",
+      "when": 1716073605420,
+      "tag": "0024_remarkable_cassandra_nova",
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "5",
+      "when": 1716073614558,
+      "tag": "0025_watery_master_chief",
+      "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "5",
+      "when": 1716581324871,
+      "tag": "0026_cool_bruce_banner",
+      "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "5",
+      "when": 1716581331701,
+      "tag": "0027_nebulous_ares",
+      "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "5",
+      "when": 1716695254047,
+      "tag": "0028_brave_wildside",
+      "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "5",
+      "when": 1716695261537,
+      "tag": "0029_careful_bill_hollister",
+      "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "5",
+      "when": 1716695403489,
+      "tag": "0030_chief_miek",
+      "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "5",
+      "when": 1716695411296,
+      "tag": "0031_hard_blackheart",
+      "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "5",
+      "when": 1716695800025,
+      "tag": "0032_wandering_giant_girl",
+      "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "5",
+      "when": 1716695811013,
+      "tag": "0033_amusing_gertrude_yorkes",
+      "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "5",
+      "when": 1716945119565,
+      "tag": "0034_kind_snowbird",
+      "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "5",
+      "when": 1716945127328,
+      "tag": "0035_reflective_switch",
+      "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "5",
+      "when": 1717001148899,
+      "tag": "0036_lean_silhouette",
+      "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "5",
+      "when": 1717013353019,
+      "tag": "0037_mean_mysterio",
+      "breakpoints": true
     }
   ]
 }
