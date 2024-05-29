@@ -253,6 +253,13 @@
       "when": 1716945127328,
       "tag": "0035_reflective_switch",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "5",
+      "when": 1717001148899,
+      "tag": "0036_lean_silhouette",
+      "breakpoints": true
     }
   ]
 }

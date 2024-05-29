@@ -38,10 +38,11 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
     .from(students)
     .orderBy(students.id);
 
-  const filteredStudentList = studentList.filter(student => 
-    student.category === 'Stylist' || 
-    student.category === 'Barber' || 
-    student.category === 'Hairdresser'
+  const filteredStudentList = studentList.filter(
+    (student) =>
+      student.category === "Stylist" ||
+      student.category === "Barber" ||
+      student.category === "Hairdresser"
   );
 
   const signedStudentList = await Promise.all(
@@ -66,6 +67,21 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
   });
 }
 
+const capitalizeName = (name: string) => {
+  return name
+    .toLowerCase()
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};
+
+const truncateDescription = (description: string, maxLength: number) => {
+  if (description.length <= maxLength) {
+    return description;
+  }
+  return description.slice(0, maxLength) + "...";
+};
+
 interface StylistCardProps {
   name: string;
   category: string;
@@ -81,17 +97,20 @@ const StylistCard: React.FC<StylistCardProps> = ({
   image,
   link,
 }) => (
-  <div className="flex flex-col items-center bg-white rounded-lg p-6 shadow-sm text-center hover:shadow-md transition-shadow">
-    <img
-      src={image}
-      alt={name}
-      className="w-full h-48 object-cover rounded-md mb-4"
-    />
-    <h3 className="text-xl font-semibold mb-2">{name}</h3>
-    <p className="text-gray-600 mb-2">{category}</p>
-    <p className="text-gray-600 mb-4">{description}</p>
-    <a href={link} className="text-blue-500 hover:underline">
-      View Profile
+  <div className="flex flex-col border-2 border-gray-300 items-center bg-white rounded-lg shadow-sm text-left hover:shadow-md hover:scale-105 transform transition-transform duration-700">
+    <a href={link} className="text-blue-500">
+      {/* Not using object-cover, gonna have to resize on the server after upload  */}
+      <img src={image} alt={name} className="w-full h-48 rounded-md mb-4" />
+      <div className="p-6">
+        <p className="text-gray-600 mb-2">{category}</p>
+        <h3 className="text-black text-xl font-semibold mb-2">
+          {capitalizeName(name)}
+        </h3>
+
+        <p className="text-gray-600 mb-4">
+          {truncateDescription(description, 60)}
+        </p>
+      </div>{" "}
     </a>
   </div>
 );
@@ -100,22 +119,22 @@ export default function HaircutsBeautyServices() {
   const { studentList } = useLoaderData<typeof loader>();
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center text-gray-800">
+    <div className="min-h-screen flex flex-col max-w-4xl mx-auto items-center text-gray-800">
       <div className="flex flex-col px-6 space-y-6 text-center pt-24 md:pt-32">
-        <h1 className="text-4xl font-bold leading-tight">
+        <h1 className="text-4xl sm:text-6xl font-bold leading-tight">
           Haircuts & Beauty Services
         </h1>
-        <p>
+        <p className="font-semi sm:text-xl">
           Discover talented student hairstylists offering a range of beauty
           services. Connect with them for a fresh new look right on campus.
         </p>
       </div>
 
-      <div className="pt-24 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-4xl px-4">
+      <div className="pt-16 grid grid-cols-2 lg:grid-cols-3 gap-6 w-full  px-4">
         {studentList.map((student) => (
           <StylistCard
             key={student.id}
-            name={student.name!.replace(/-/g, " ")}
+            name={capitalizeName(student.name!.replace(/-/g, " "))}
             category={student.category!}
             description={student.description!}
             image={student.image_url!}

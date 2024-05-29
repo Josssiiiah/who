@@ -62,6 +62,15 @@ const clientPhotos = [
   "/student2.webp",
 ];
 
+const capitalizeName = (name: string) => {
+  return name
+    .toLowerCase()
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};
+
+
 export default function Name() {
   const { studentInfo } = useLoaderData<typeof loader>();
   const navigate = useNavigate();
@@ -71,50 +80,53 @@ export default function Name() {
     return <div>No student information found</div>;
   }
 
-  const formattedName = studentInfo.name!.replace(/-/g, " ");
+  const formattedName = capitalizeName(studentInfo.name!.replace(/-/g, " "));
+
 
   return (
-    <div className="bg-gray-100 sm:py-10 min-h-full flex flex-col items-center ">
-      <div className="w-full max-w-4xl bg-white shadow-lg rounded-lg">
+    <div className="bg-gray-100 w-full min-h-full flex flex-col items-center ">
+      <div className="w-full bg-white shadow-lg rounded-lg">
         <div className="bg-gradient-to-r from-purple-500 to-indigo-600 h-48 flex justify-center relative">
-          <div className="absolute top-24 bg-gradient-to-r from-purple-500 to-indigo-600 p-1 rounded-full">
+          <div className="absolute top-16 bg-gradient-to-r from-purple-500 to-indigo-600 p-1 rounded-full">
             <img
               src={studentInfo.signedUrl}
               alt={formattedName}
-              className="w-44 h-44 rounded-full border-4 border-white bg-white"
+              className="w-60 h-60 rounded-full border-4 border-white bg-white"
             />
           </div>
         </div>
 
-        <div className="relative pt-16 pb-8 px-8">
+        <div className="relative pt-24 pb-8 px-8">
           <button
             onClick={() => navigate("/app/hair")}
-            className="absolute top-0 left-0 mt-4 ml-4 bg-blue-500 text-white px-4 py-2 rounded"
+            className="absolute top-0 left-4 mt-4 ml-4 bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-8 py-2 rounded"
           >
             Back
           </button>
           <div className="text-center pt-10">
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">
               {formattedName}
             </h1>
-            <div className="mt-6">
-              <p className="mt-2 text-gray-600">{studentInfo.description}</p>
-            </div>
+
+              <p className="pt-4 text-center sm:text-left text-gray-600">{studentInfo.description}</p>
+
           </div>
         </div>
         <div className="pt-8 pb-8 px-8">
-          <h2 className="text-xl font-semibold text-gray-800">Gallery</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-            {clientPhotos.map((photo, index) => (
-              <img
-                key={index}
-                src={photo}
-                alt={`Client ${index + 1}`}
-                className="w-full h-auto rounded-lg shadow-md"
-              />
-            ))}
-          </div>
-        </div>
+  <h2 className="text-xl font-semibold text-gray-800">Gallery</h2>
+  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+    {clientPhotos.map((photo, index) => (
+      <div key={index} className="relative w-full pb-[75%] overflow-hidden">
+        <img
+          src={photo}
+          alt={`Client ${index + 1}`}
+          className="absolute top-0 left-0 w-full h-full object-cover"
+        />
+      </div>
+    ))}
+  </div>
+</div>
+
       </div>
     </div>
   );

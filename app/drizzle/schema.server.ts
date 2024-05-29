@@ -16,5 +16,6 @@ export const students = sqliteTable("students", {
   category: text("category"),
   description: text("description"),
   image_url: text("image_url"),
+  insta: text("insta"),
   // need to add optional field for instagram tag
 });

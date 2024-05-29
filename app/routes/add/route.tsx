@@ -12,7 +12,7 @@ import {
   ListObjectsV2Command,
   GetObjectCommand,
   DeleteObjectsCommand,
-  PutObjectCommand
+  PutObjectCommand,
 } from "@aws-sdk/client-s3";
 import { SeedAll } from "./seedHair";
 
@@ -80,7 +80,7 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 
 export default function Add() {
   const { resourceList, imageList } = useLoaderData<typeof loader>();
-  console.log("ImageList: ", imageList)
+  console.log("ImageList: ", imageList);
   const fetcher = useFetcher();
 
   const [fileName, setFileName] = useState<string>("");
@@ -241,11 +241,17 @@ export async function action({ request, context }: ActionFunctionArgs) {
         );
       }
 
-      console.log("Database and S3 bucket cleared successfully")
-      return json({ message: "Database and S3 bucket cleared successfully" }, { status: 200 });
+      console.log("Database and S3 bucket cleared successfully");
+      return json(
+        { message: "Database and S3 bucket cleared successfully" },
+        { status: 200 }
+      );
     } catch (error) {
       console.error("Failed to clear database and S3 bucket", error);
-      return json({ message: "Failed to clear database and S3 bucket" }, { status: 500 });
+      return json(
+        { message: "Failed to clear database and S3 bucket" },
+        { status: 500 }
+      );
     }
   }
 
@@ -269,8 +275,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
           ContentType: fileType,
         })
       );
-   
-   
+
       const imageUrl = fileName;
 
       await db
@@ -283,7 +288,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
         })
         .execute();
 
-      console.log("Uploaded")
+      console.log("Uploaded");
       return json(
         { message: "Image uploaded to S3 successfully" },
         { status: 201 }
